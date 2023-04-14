@@ -1,0 +1,26 @@
+public class ObjectFieldsListController {
+    public string selectedSObject { get; set;}
+    public List<string> selectedSObjects { get; set;}
+    public List<SelectOption> objectsOptions{get; set;}
+
+    public ObjectFieldsListController(){
+        objectsOptions = new List<SelectOption>();
+        map<string, SObjectType> objs = schema.getGlobalDescribe();
+        for(string key: objs.keySet()){
+            objectsOptions.add(new SelectOption(key,objs.get(key).getDescribe().getName()));
+            
+            
+        }
+        
+    }
+    
+    public PageReference openFieldsList(){
+        System.debug('selectedSObjects>>>' + selectedSObjects);
+        String jsonSObjects = JSON.serialize(selectedSObjects);
+        PageReference pageRef = new pageReference('/apex/ObjectFieldsVFPdf?selectedSObject='+jsonSObjects);
+        pageRef.setRedirect(true);
+		return pageRef;
+    }
+    
+
+}
