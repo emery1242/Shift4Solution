@@ -1,0 +1,22 @@
+<apex:page controller="ObjectFieldsListController" readOnly="true">
+
+<h1 style="margin:20px;">Object and Fields List</h1>
+
+    <div style="margin:20px;">
+    <apex:form >
+        <p>
+            Select sObject:
+        </p>
+        <apex:selectList value="{!selectedSObjects}" multiselect="true" style="width:250px" size="15">
+            <apex:selectOptions value="{!objectsOptions}"/>
+        </apex:selectList>
+        <br/>
+        <br/>
+        <apex:commandlink action="{!openFieldsList}" target="_blank">
+                <apex:commandButton value="Download Fields"/>
+            </apex:commandLink>
+    </apex:form>
+
+	</div>
+    
+</apex:page>
