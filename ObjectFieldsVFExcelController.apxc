@@ -1,0 +1,74 @@
+public class ObjectFieldsVFExcelController {
+    //public List<FieldsWrapper> listFields{get; set;}
+    public List<ObjectWrapper> listObjects{get; set;}
+    public ObjectFieldsVFExcelController(){
+        System.debug('ObjectFieldsVFExcelController>>>>');
+        String selectedSObject = ApexPages.currentPage().getParameters().get('selectedSObject');
+        System.debug('selectedSObject>>>' + selectedSObject);
+		List<Object> selectedSObjects = (List<Object>)JSON.deserializeUntyped(selectedSObject);
+		System.debug('(selectedSObjects>>>' + selectedSObjects);
+        listObjects = new List<ObjectWrapper>();
+        ObjectWrapper objObject = new ObjectWrapper();
+        List<FieldsWrapper> listFields = new List<FieldsWrapper>();
+        FieldsWrapper objField = new FieldsWrapper();
+        List<PicklistWrapper> listPicklists = new List<PicklistWrapper>();
+        PicklistWrapper objPicklist = new PicklistWrapper();
+        for(Object sObj: selectedSObjects){
+            objObject = new ObjectWrapper();
+            String sObjectRec  = '';
+            sObjectRec = String.valueOf(sObj);
+            System.debug('sObjectRec>>>' + sObjectRec);
+            map<string,SObjectField> fList = new map<string,SObjectField>();
+            fList = schema.getGlobalDescribe().get(sObjectRec).getDescribe().fields.getMap();
+            
+            listFields = new List<FieldsWrapper>();
+            objObject.objectAPIName = sObjectRec;
+            for(string str: fList.keySet()){
+                objField = new FieldsWrapper();
+                listPicklists = new List<PicklistWrapper>();
+                objField.fieldAPIName = str;
+                objField.fieldLabel = fList.get(str).getDescribe().getLabel();
+                List<Schema.PicklistEntry> entries = new List<Schema.PicklistEntry>();
+                entries = fList.get(str).getDescribe().getPickListValues();
+                
+                //List<Schema.PicklistEntry> activeEntries = new List<Schema.PicklistEntry>();
+                if(entries != null && entries.size() > 0 ){
+                    for (Schema.PicklistEntry entry : entries) {
+                        if (entry.isActive()) {
+                            objPicklist = new PicklistWrapper();
+                            objPicklist.pickAPIName = entry.getValue();
+                            objPicklist.pickLabel = entry.getLabel();
+                            listPicklists.add(objPicklist);
+                            //options.add(new SelectOption(f.getLabel(), f.getValue()));
+                        }
+                    }
+                }
+                System.debug('listPicklists>>>>' + listPicklists);
+                objField.listPicklist = listPicklists;
+                listFields.add(objField);
+                //fieldList.put(str, fList.get(str).getDescribe().getLabel());                
+            }
+            System.debug('listFields>>>>' + listFields);
+            objObject.listFields = listFields;
+            listObjects.add(objObject);
+        }
+        System.debug('listObjects>>>>' + listObjects);
+    }
+    
+    public class ObjectWrapper{
+        public String objectAPIName{get; set;}
+        public String objectLabel{get; set;} 
+        public List<FieldsWrapper> listFields {get; set;}
+    }
+    
+    public class FieldsWrapper{
+        public String fieldAPIName{get; set;}
+        public String fieldLabel{get; set;} 
+        public List<PicklistWrapper> listPicklist {get; set;}
+    }
+    
+    public class PicklistWrapper{
+        public String pickAPIName{get; set;}
+        public String pickLabel{get; set;} 
+    }
+}
