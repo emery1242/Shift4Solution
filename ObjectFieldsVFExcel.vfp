@@ -1,0 +1,28 @@
+<apex:page controller="ObjectFieldsVFExcelController" contentType="application/vnd.ms-excel#SalesForceExport.xls" readOnly="true">
+    <!--<b><apex:outputText value="{!object.objectLabel}" id="theObject"/></b> <br/>-->
+    <table>
+        <tr>
+            <th>Object</th>
+            <th>Field</th>
+            <th>Picklist Values</th>
+        </tr>
+        <tr></tr>
+        <apex:repeat value="{!listObjects}" var="objectRec" id="objects">
+            	<tr>
+                    <td><b>{!objectRec.objectAPIName}</b></td>
+                </tr>
+            <tr><td></td></tr>
+            <apex:repeat value="{!objectRec.listFields}" var="field" id="fields">
+                <tr>
+                    <td></td><td>{!field.fieldLabel}</td>
+                </tr>
+                <apex:repeat value="{!field.listPicklist}" var="picklist" id="picklists">
+                    <tr>
+                        <td></td><td></td><td>{!picklist.pickLabel}</td>
+                    </tr>
+                </apex:repeat>
+            </apex:repeat>
+            <tr><td></td></tr>
+        </apex:repeat>
+    </table>
+</apex:page>
